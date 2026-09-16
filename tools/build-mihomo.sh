@@ -6,7 +6,6 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUTPUT_DIR="$ROOT/build"
 mkdir -p "$OUTPUT_DIR"
 
-
 # 构建参数
 VERSION="${VN:-1.0.0}"
 COMMIT=$(git -C "$ROOT/mihomo" rev-parse --short HEAD 2>/dev/null || echo "unknown")

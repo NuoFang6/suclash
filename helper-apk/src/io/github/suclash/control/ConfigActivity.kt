@@ -197,7 +197,7 @@ class ConfigActivity : Activity() {
             )
             addFlags(
                 Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             )
         }
         try {
@@ -240,6 +240,7 @@ class ConfigActivity : Activity() {
                     toast("导入失败：$e")
                 }
             }
+
             REQ_EXTERNAL ->
                 toast("已从外部编辑返回，点「重新导入外部编辑」应用")
         }

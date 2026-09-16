@@ -6,11 +6,11 @@ import (
 
 // 路径与常量（与模块布局一一对应，勿改名——APK/脚本依赖这些路径）
 const (
-	modDir    = "/data/adb/modules/suclash"
-	dataDir   = "/data/adb/suclash"
-	binDir    = modDir + "/bin"
-	scrDir    = modDir + "/scripts"
-	modUIDir  = modDir + "/ui"
+	modDir   = "/data/adb/modules/suclash"
+	dataDir  = "/data/adb/suclash"
+	binDir   = modDir + "/bin"
+	scrDir   = modDir + "/scripts"
+	modUIDir = modDir + "/ui"
 
 	stateDir  = dataDir + "/state"
 	logDir    = dataDir + "/logs"
@@ -39,10 +39,10 @@ const (
 
 	apiAddr = "127.0.0.1:9090"
 
-	startWaitSec   = 15 // 等待 API 就绪上限
-	termWaitSec    = 5  // SIGTERM 后等待退出上限
-	wdIntervalSec  = 30 // 看门狗健康探测周期，降低常驻唤醒和 HTTP 开销
-	maxCrash       = 3  // 熔断阈值
+	startWaitSec   = 15  // 等待 API 就绪上限
+	termWaitSec    = 5   // SIGTERM 后等待退出上限
+	wdIntervalSec  = 30  // 看门狗健康探测周期，降低常驻唤醒和 HTTP 开销
+	maxCrash       = 3   // 熔断阈值
 	crashWindowSec = 600 // 崩溃统计窗口
 )
 

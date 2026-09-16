@@ -19,12 +19,12 @@ rm -rf /data/adb/suclash
 (
     i=0
     while [ "$i" -lt 12 ]; do
-        if pm uninstall --user 0 io.github.suclash.control > /dev/null 2>&1; then
+        if pm uninstall --user 0 io.github.suclash.control >/dev/null 2>&1; then
             exit 0
         fi
         sleep 5
         i=$((i + 1))
     done
-) > /dev/null 2>&1 &
+) >/dev/null 2>&1 &
 
 exit 0

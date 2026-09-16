@@ -38,7 +38,7 @@ func init() {
 }
 
 func usage() {
-	fmt.Fprint(os.Stderr, `SU Clash helper v` + version + `
+	fmt.Fprint(os.Stderr, `SU Clash helper v`+version+`
 
 用法: suclash_helper <命令> [参数]
 

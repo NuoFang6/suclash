@@ -14,7 +14,7 @@ import (
 var httpClient = &http.Client{
 	Timeout: 6 * time.Second,
 	Transport: &http.Transport{
-		DialContext: (&net.Dialer{Timeout: 3 * time.Second}).DialContext,
+		DialContext:       (&net.Dialer{Timeout: 3 * time.Second}).DialContext,
 		DisableKeepAlives: true,
 	},
 }

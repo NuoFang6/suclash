@@ -7,7 +7,7 @@
  *  - 脚本内嵌于 mihomo 二进制（mihomo-patches/0005），官方「升级面板」清空目录后仍可用，
  *    无需任何文件级自愈
  */
-;(function () {
+; (function () {
   'use strict'
   var CFG = window.__SUCLASH__ || { api: { protocol: 'http', host: '127.0.0.1', port: '9090', secret: '' } }
   var A = CFG.api
@@ -101,7 +101,7 @@
         var xhr = new XMLHttpRequest()
         xhr.open('GET', base + '/version', true)
         xhr.timeout = 4000
-        if (A.secret) { try { xhr.setRequestHeader('Authorization', 'Bearer ' + A.secret) } catch (e) {} }
+        if (A.secret) { try { xhr.setRequestHeader('Authorization', 'Bearer ' + A.secret) } catch (e) { } }
         xhr.onreadystatechange = function () {
           if (xhr.readyState !== 4) return
           resolve(xhr.status > 0 ? 'on' : 'off')
@@ -258,7 +258,7 @@
         'border-radius:10px;font-size:13px;max-width:82vw;text-align:center;'
       document.body.appendChild(t)
       setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t) }, 2200)
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // 静态按钮（模块日志/刷新日志/配置）依赖 root 桥，无桥时置灰禁用
@@ -280,7 +280,7 @@
       return
     }
     if (a === 'logrefresh') { loadLog(); return }
-    if (a === 'config') { try { window.ksu.openConfig() } catch (e) {} return }
+    if (a === 'config') { try { window.ksu.openConfig() } catch (e) { } return }
     if (a === 'stop') {
       renderBusy('停止中…')
       rootExec(CTL + ' stop').then(function () { setTimeout(refresh, 500) })
@@ -341,7 +341,7 @@
   })
   bubble.addEventListener('pointerup', function () {
     if (moved) {
-      try { localStorage.setItem('suc-panel-pos', bubble.style.left + '|' + bubble.style.top) } catch (e) {}
+      try { localStorage.setItem('suc-panel-pos', bubble.style.left + '|' + bubble.style.top) } catch (e) { }
       setTimeout(function () { dragged = false }, 50)
     }
   })
@@ -351,5 +351,5 @@
       bubble.style.right = 'auto'; bubble.style.bottom = 'auto'
       bubble.style.left = pos[0]; bubble.style.top = pos[1]
     }
-  } catch (e) {}
+  } catch (e) { }
 })()

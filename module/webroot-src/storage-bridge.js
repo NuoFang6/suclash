@@ -30,7 +30,7 @@
 
   try {
     if (/[?&]nostorage(?:=|&|$)/.test(window.location.search)) return
-  } catch (e) {}
+  } catch (e) { }
 
   function has(o, k) { return Object.prototype.hasOwnProperty.call(o, k) }
 
@@ -39,7 +39,7 @@
 
   // ---------- 原生（本地）存储：后端地址，按入口隔离 ----------
   var NATIVE = null
-  try { NATIVE = window.localStorage } catch (e) {}
+  try { NATIVE = window.localStorage } catch (e) { }
   if (!NATIVE) return // 连原生 localStorage 都没有，无法安全接管
 
   // ---------- 共享存储：面板偏好 ----------
@@ -49,7 +49,7 @@
     if (src && typeof src === 'object') {
       for (var k in src) if (has(src, k) && !isLocal(k)) DATA[k] = String(src[k])
     }
-  } catch (e2) {}
+  } catch (e2) { }
 
   function keys() {
     var out = []
@@ -105,7 +105,7 @@
         }
       }
       if (migrated) markDirty()
-    } catch (e4) {}
+    } catch (e4) { }
   }
 
   // 页面可能被 Service Worker 缓存成旧版本（内联快照过期），启动后异步校准一次：
@@ -128,7 +128,7 @@
       }
     }
     rx.send()
-  } catch (e6) {}
+  } catch (e6) { }
 
   // ---------- 代理 store ----------
   var store = {
@@ -158,21 +158,21 @@
       if (typeof i !== 'number') i = parseInt(i, 10)
       // 本地键在前，共享键在后
       var nl = 0
-      try { nl = NATIVE.length } catch (e7) {}
+      try { nl = NATIVE.length } catch (e7) { }
       if (i < nl) return NATIVE.key(i)
       var ks = keys()
       return i - nl < ks.length ? ks[i - nl] : null
     },
     get length() {
       var nl = 0
-      try { nl = NATIVE.length } catch (e8) {}
+      try { nl = NATIVE.length } catch (e8) { }
       return nl + keys().length
     }
   }
 
   try {
     Object.defineProperty(window, 'localStorage', { value: store, configurable: true })
-  } catch (e9) {}
+  } catch (e9) { }
   // WebView 上若 defineProperty 失败（localStorage 不可重定义），
   // 桥接自动失效并退回原生行为，不会影响面板正常工作。
 
@@ -183,5 +183,5 @@
     document.addEventListener('visibilitychange', function () {
       if (document.visibilityState === 'hidden') saveNow()
     })
-  } catch (e10) {}
+  } catch (e10) { }
 })()

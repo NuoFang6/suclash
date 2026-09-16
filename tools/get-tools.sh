@@ -6,7 +6,7 @@
 # =====================================================================
 
 # 遇到任何未处理的错误立即退出
-set -e 
+set -e
 
 # ==============================
 # 0. 架构检查 (仅限 amd64)
@@ -28,18 +28,18 @@ add_to_env() {
     local key=$1 value=$2
     export "$key=$value"
     if is_ci && [ -n "$GITHUB_ENV" ]; then
-        echo "$key=$value" >> "$GITHUB_ENV"
+        echo "$key=$value" >>"$GITHUB_ENV"
     fi
-    echo "export $key=\"$value\"" >> "$ENV_FILE"
+    echo "export $key=\"$value\"" >>"$ENV_FILE"
 }
 
 add_to_path() {
     local dir=$1
     export PATH="$dir:$PATH"
     if is_ci && [ -n "$GITHUB_PATH" ]; then
-        echo "$dir" >> "$GITHUB_PATH"
+        echo "$dir" >>"$GITHUB_PATH"
     fi
-    echo "export PATH=\"$dir:\$PATH\"" >> "$ENV_FILE"
+    echo "export PATH=\"$dir:\$PATH\"" >>"$ENV_FILE"
 }
 
 # ==============================
@@ -54,7 +54,10 @@ for cmd in "${REQUIRED_CMDS[@]}"; do
             exit 1
         else
             echo "🔧 本地环境缺少 $cmd，尝试使用 apt 自动安装 (需要 sudo 权限)..."
-            sudo apt update && sudo apt install -y "$cmd" || { echo "❌ 自动安装失败，请手动执行: sudo apt install $cmd"; exit 1; }
+            sudo apt update && sudo apt install -y "$cmd" || {
+                echo "❌ 自动安装失败，请手动执行: sudo apt install $cmd"
+                exit 1
+            }
         fi
     fi
 done
@@ -68,10 +71,10 @@ cd "$TOOLS_DIR"
 
 # 生成本地环境专用的 .env 文件
 ENV_FILE="$TOOLS_DIR/.env"
-echo "# =========================================" > "$ENV_FILE"
-echo "# 自动生成的环境变量文件" >> "$ENV_FILE"
-echo "# 本地调试请在终端执行: source $ENV_FILE" >> "$ENV_FILE"
-echo "# =========================================" >> "$ENV_FILE"
+echo "# =========================================" >"$ENV_FILE"
+echo "# 自动生成的环境变量文件" >>"$ENV_FILE"
+echo "# 本地调试请在终端执行: source $ENV_FILE" >>"$ENV_FILE"
+echo "# =========================================" >>"$ENV_FILE"
 
 # ==============================
 # 3. 安装 Azul Zulu JDK
@@ -83,7 +86,7 @@ JDK_DIR=$(ls -d zulu${java_version}* 2>/dev/null | head -n 1)
 if [ -z "$JDK_DIR" ] || [ ! -d "$JDK_DIR" ]; then
     echo "⬇️ 未检测到缓存，正在下载 JDK..."
     JDK_URL=$(curl -s -X GET "https://api.azul.com/metadata/v1/zulu/packages/?java_version=${java_version}&os=linux-glibc&arch=x64&archive_type=tar.gz&java_package_type=jdk&javafx_bundled=false&crac_supported=false&crs_supported=false&support_term=lts&latest=true&release_status=ga&availability_types=ca&certifications=tck&page=1&page_size=100" -H "accept: application/json" | jq -r '.[0].download_url')
-    
+
     curl -fSL "$JDK_URL" -o zulu.tar.gz
     tar -xzf zulu.tar.gz
     rm zulu.tar.gz
@@ -109,7 +112,7 @@ if ! command -v sdkmanager &>/dev/null; then
     echo "⬇️ 未检测到 sdkmanager，正在下载 Android Command-line Tools..."
     # 下载官方稳定的 commandlinetools
     curl -fSL "https://dl.google.com/android/repository/commandlinetools-linux-15859902_latest.zip" -o cmd-tools.zip
-    
+
     # 按照 Google 官方要求，必须解压到 cmdline-tools/latest 目录
     mkdir -p ~/Android/Sdk/cmdline-tools
     unzip -q cmd-tools.zip -d ~/Android/Sdk/cmdline-tools/
@@ -123,7 +126,7 @@ add_to_path "$CMD_TOOLS_BIN"
 
 # 🌟 核心：在 CI 中必须使用 yes | 自动同意所有 License，否则 sdkmanager 会卡死
 echo "正在自动同意 Android SDK Licenses..."
-yes | sdkmanager --licenses > /dev/null 2>&1 || true
+yes | sdkmanager --licenses >/dev/null 2>&1 || true
 
 # --- 安装 Build Tools ---
 # 从 sdkmanager --list 提取最新的 build-tools 版本号
@@ -181,10 +184,10 @@ echo "📦 [4/5] 正在处理 Go 编译器..."
 if [ ! -d "go" ]; then
     echo "⬇️ 未检测到缓存，正在获取最新稳定版 Go..."
     GO_VERSION=$(curl -sL 'https://go.dev/dl/?mode=json' | jq -r '.[0].version')
-    
+
     GO_TARBALL="${GO_VERSION}.linux-amd64.tar.gz"
     GO_URL="https://go.dev/dl/${GO_TARBALL}"
-    
+
     echo "正在下载 $GO_VERSION ..."
     curl -fSL "$GO_URL" -o go.tar.gz
     tar -xzf go.tar.gz

@@ -50,21 +50,21 @@ echo "🩹 开始应用 mihomo 补丁 (共 ${#PATCH_FILES[@]} 个)..."
 
 for patch in "${PATCH_FILES[@]}"; do
     patch_name=$(basename "$patch")
-    
+
     # 1. 检查补丁是否已经应用 (通过尝试“反向应用”来检查)
     # 如果反向检查成功，说明当前代码已经包含了该补丁的内容
     if git apply --reverse --check "$patch" >/dev/null 2>&1; then
         echo "✅ 已应用，跳过: $patch_name"
         continue
     fi
-    
+
     # 2. 检查补丁是否可以正常应用 (检查上下文是否匹配)
     if ! git apply --check "$patch" >/dev/null 2>&1; then
         echo "❌ 补丁应用失败 (上下文不匹配或代码已变更): $patch_name"
         echo "💡 提示：mihomo 上游代码可能已更新，导致行号或上下文错位，请在本地重新生成该补丁。"
         exit 1
     fi
-    
+
     # 3. 正式应用补丁
     echo "⚙️ 正在应用: $patch_name"
     git apply "$patch"

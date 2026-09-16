@@ -24,10 +24,10 @@ add_to_env() {
     export "$key=$value"
     # CI 环境写入 GITHUB_ENV
     if is_ci && [ -n "$GITHUB_ENV" ]; then
-        echo "$key=$value" >> "$GITHUB_ENV"
+        echo "$key=$value" >>"$GITHUB_ENV"
     fi
     # 本地环境写入 .env 供调试
-    echo "export $key=\"$value\"" >> "$ENV_FILE"
+    echo "export $key=\"$value\"" >>"$ENV_FILE"
 }
 
 echo "🎨 准备 zashboard 面板..."
@@ -102,7 +102,7 @@ unzip -o "$TOOLS_DIR/$zashboard_file" -d "$ZASHBOARD_DIR"
 rm "$TOOLS_DIR/$zashboard_file"
 
 # 写入版本标记，供下次缓存使用
-echo "$zashboard_ver" > "$VERSION_MARKER"
+echo "$zashboard_ver" >"$VERSION_MARKER"
 
 echo "修补 zashboard..."
 # dist-no-fonts.zip 解压后资源在 $ZASHBOARD_DIR/dist 子目录内，显式传入

@@ -39,15 +39,15 @@ NEW_VERSION=$(git -C "$MIHOMO_DIR" rev-parse --short HEAD)
 # ==============================
 if [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
     echo "✨ mihomo 已更新至新版本: $NEW_VERSION"
-    
+
     # 🌟 核心优化：仅添加 mihomo 目录，绝对不使用 git add . 防止误提交临时文件
     git add "$MIHOMO_DIR"
-    
+
     # 检查是否有 staged 的更改
     if ! git diff --staged --quiet; then
         git commit -m "[skip ci] Chore: auto-update mihomo submodule to $NEW_VERSION"
         echo "✅ 已提交子模块更新"
-        
+
         # 💡 关于推送：
         # 在 GitHub Actions 中直接 git push 需要配置 PAT 或确保 GITHUB_TOKEN 有写权限。
         # 如果确认需要推送到当前分支，请取消下面这行的注释：

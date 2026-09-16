@@ -72,6 +72,7 @@ class MainActivity : Activity() {
                 state == "on" && panelUrl != null -> showWeb(panelUrl)
                 state == "noroot" ->
                     showHint("无法连接 root shell\n\n请在 KernelSU 管理器中授权本应用后重试。")
+
                 else ->
                     showHint("核心未运行\n\n启动后自动进入 zashboard 面板。")
             }
@@ -125,7 +126,7 @@ class MainActivity : Activity() {
             setPadding(0, dp(12), 0, 0)
             setText(
                 "提示：若启动按钮无效，请在 KernelSU 管理器「超级用户」中授权本应用。\n" +
-                    "核心运行后本应用即 zashboard 面板，核心启停等操作在面板右下角悬浮窗中。"
+                        "核心运行后本应用即 zashboard 面板，核心启停等操作在面板右下角悬浮窗中。"
             )
         }.let(root::addView)
 

@@ -77,8 +77,10 @@ object Notif {
                 b.addAction(Notification.Action.Builder(null, "停止核心", action(c, "stop")).build())
                 b.addAction(Notification.Action.Builder(null, "重启核心", action(c, "restart")).build())
             }
+
             "panic" ->
                 b.addAction(Notification.Action.Builder(null, "恢复并启动", action(c, "resume")).build())
+
             else ->
                 b.addAction(Notification.Action.Builder(null, "启动", action(c, "start")).build())
         }

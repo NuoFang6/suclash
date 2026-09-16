@@ -106,17 +106,17 @@ find_or_download() {
     local artifact=$1
     local version=$2
     local filename="${artifact}-${version}.jar"
-    
+
     # 1. 优先在 kotlinc/lib 中查找 (编译器自带)
     local found
     found=$(find "$KOTLIN_LIB_DIR" -name "${artifact}*.jar" 2>/dev/null | head -n 1)
-    
+
     if [ -n "$found" ]; then
         echo "✅ 使用 kotlinc 自带: $(basename "$found")" >&2
         echo "$found"
         return 0
     fi
-    
+
     # 2. 在 libs 目录中查找本地缓存
     local dest="$LIBS_DIR/$filename"
     if [ -f "$dest" ]; then
@@ -124,7 +124,7 @@ find_or_download() {
         echo "$dest"
         return 0
     fi
-    
+
     # 3. 从 Maven Central 下载
     local url="$MAVEN_REPO/${COR_GROUP//.//}/$artifact/$version/$filename"
     echo "⬇️ 正在下载: $filename" >&2
@@ -137,9 +137,9 @@ get_latest_coroutines_version() {
     local default_version="1.11.0"
     local latest
     latest=$(curl -s --max-time 5 \
-        "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-android/maven-metadata.xml" \
-        | grep -oP '<latest>\K[^<]+' 2>/dev/null)
-    
+        "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-android/maven-metadata.xml" |
+        grep -oP '<latest>\K[^<]+' 2>/dev/null)
+
     if [ -n "$latest" ]; then
         echo "$latest"
     else
@@ -204,7 +204,7 @@ kotlinc -jvm-target "$JVM_TARGET" -nowarn \
     -d build/kclasses $KT_SRC $R_SRC
 
 echo ">> javac (R.java)"
-find build/gen -name '*.java' > build/sources.txt
+find build/gen -name '*.java' >build/sources.txt
 javac --release "$JVM_TARGET" -encoding UTF-8 -classpath "$platform_android_jar" -d build/obj @build/sources.txt
 
 # 打包 Kotlin 字节码
@@ -214,7 +214,7 @@ jar -cf build/kclasses.jar -C build/kclasses .
 # 6. R8/D8 混淆与 Dex 化
 # ==============================
 echo ">> R8 (裁剪与混淆)"
-cat > build/r8.pro <<'EOF'
+cat >build/r8.pro <<'EOF'
 # 保留运行时反射所需的注解（addJavascriptInterface 依赖 @JavascriptInterface 反射查找方法）
 -keepattributes *Annotation*
 # Manifest 组件与 WebView JS 桥需反射可达

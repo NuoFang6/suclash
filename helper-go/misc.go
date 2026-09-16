@@ -104,9 +104,11 @@ func cmdMlog(args []string) error {
 }
 
 // cmdSavelog 控制是否保存 mihomo 核心日志（默认不保存）。
-//   savelog on    开启保存：后续核心的 stdout/stderr 落盘到 mihomo.log（缓存写）
-//   savelog off   关闭保存：核心日志丢弃（/dev/null），不产生落盘
-//   savelog       无参：打印当前状态
+//
+//	savelog on    开启保存：后续核心的 stdout/stderr 落盘到 mihomo.log（缓存写）
+//	savelog off   关闭保存：核心日志丢弃（/dev/null），不产生落盘
+//	savelog       无参：打印当前状态
+//
 // 开关持久化在 state/save_log。切换即时生效需重启核心（日志目标是 spawn 时确定的）。
 func cmdSavelog(args []string) error {
 	arg := ""
