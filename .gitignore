@@ -20,6 +20,7 @@ helper-apk/build/
 
 # 用户私有配置（含订阅token，禁止入库）
 clash.yaml
+真实测试用这个配置.yaml
 
 # 本机生成
 dist/

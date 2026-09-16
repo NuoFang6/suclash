@@ -11,9 +11,6 @@ SKIPUNZIP=0
 
 DATA_DIR="/data/adb/suclash"
 
-# 架构守卫：本模块按架构单独打包（CI 矩阵，见 AGENTS.md §6.1），包内只含单一架构的
-# 无后缀二进制 bin/mihomo + bin/suclash_helper，安装时不做动态选择，仅校验设备架构
-# 与本包目标架构一致，防止在错误架构设备上装错包。
 # 占位符 __TARGET_ARCH__ 由 CI 打包时替换为实际架构（arm64 / amd64）。
 TARGET_ARCH="__TARGET_ARCH__"
 # KernelSU/Magisk 的 $ARCH 命名不同，统一到 CI 使用的规范名（arm64 / amd64）
@@ -26,9 +23,6 @@ if [ "$TARGET_ARCH" != "$_ARCH" ]; then
     abort "! 架构不匹配：本包为 $TARGET_ARCH，但当前设备是 $_ARCH，请下载对应架构的模块包"
 fi
 
-# 二进制存在性兜底
-[ -f "$MODPATH/bin/mihomo" ] || abort "! 缺少内核二进制（bin/mihomo）"
-[ -f "$MODPATH/bin/suclash_helper" ] || abort "! 缺少管理器二进制（bin/suclash_helper）"
 
 MOD_VER=$(grep_prop version "$MODPATH/module.prop")
 ui_print "- SU Clash (mihomo) $MOD_VER 安装中"
@@ -50,20 +44,9 @@ set_perm "$MODPATH/bin/suclash_helper" 0 0 0755
 mkdir -p "$DATA_DIR/state" "$DATA_DIR/logs" "$DATA_DIR/cache"
 
 # zashboard 面板复制到数据目录（mihomo external-ui 安全限制：仅允许 -d 主目录内路径）
-# 先完整复制并校验，再切换目录，避免复制失败留下不可用的面板。
-UI_TMP="$DATA_DIR/ui.new.$$"
-UI_OLD="$DATA_DIR/ui.old.$$"
-rm -rf "$UI_TMP" "$UI_OLD"
-cp -a "$MODPATH/ui" "$UI_TMP" || abort "! 面板复制失败"
-[ -f "$UI_TMP/index.html" ] || abort "! 面板文件不完整（缺少 index.html）"
-if [ -d "$DATA_DIR/ui" ]; then
-    mv "$DATA_DIR/ui" "$UI_OLD" || abort "! 无法切换旧面板目录"
-fi
-if ! mv "$UI_TMP" "$DATA_DIR/ui"; then
-    [ -d "$UI_OLD" ] && mv "$UI_OLD" "$DATA_DIR/ui"
-    abort "! 无法启用新面板目录"
-fi
-rm -rf "$UI_OLD"
+rm -rf "$DATA_DIR/ui"
+cp -a "$MODPATH/ui" "$DATA_DIR/ui" || abort "! 面板复制失败"
+
 
 # 用户配置：仅首次生成，升级不覆盖
 if [ ! -f "$DATA_DIR/config.yaml" ]; then
@@ -71,20 +54,20 @@ if [ ! -f "$DATA_DIR/config.yaml" ]; then
     ui_print "- 已生成默认配置: $DATA_DIR/config.yaml"
     ui_print "  请填入你的节点/订阅后启动"
 else
-    ui_print "- 保留现有用户配置"
+    ui_print "- 保留了现有用户配置"
 fi
 
 # 首次安装默认启用
 [ -f "$DATA_DIR/state/enabled" ] || echo 1 > "$DATA_DIR/state/enabled"
 
-# 辅助 App（快捷磁贴 + 通知操作）：不在安装期 pm install。
-# 更新只写入 modules_update/，重启后由 service.sh 安装；指纹必须由
-# service.sh 在安装成功后写入，不能在这里提前写入，否则新 APK 会被跳过。
-if [ -f "$MODPATH/bin/MihomoControl.apk" ]; then
-    # 清除旧状态，兼容此前安装流程已错误写入新 APK 指纹的设备。
-    rm -f "$DATA_DIR/state/apk.md5"
-    ui_print "- 控制 App 将在重启后自动安装/更新"
-fi
+# # 辅助 App（快捷磁贴 + 通知操作）：不在安装期 pm install。
+# # 更新只写入 modules_update/，重启后由 service.sh 安装；指纹必须由
+# # service.sh 在安装成功后写入，不能在这里提前写入，否则新 APK 会被跳过。
+# if [ -f "$MODPATH/bin/MihomoControl.apk" ]; then
+#     # 清除旧状态，兼容此前安装流程已错误写入新 APK 指纹的设备。
+#     rm -f "$DATA_DIR/state/apk.md5"
+#     ui_print "- 控制 App 将在重启后自动安装/更新"
+# fi
 
 ui_print ""
 ui_print "  快速上手:"

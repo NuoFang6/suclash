@@ -31,14 +31,16 @@ HELPER="$MODDIR/bin/suclash_helper"
     chmod 755 "$MODDIR/bin/mihomo" "$MODDIR/bin/suclash_helper" "$MODDIR/scripts/"* "$MODDIR/"*.sh 2>/dev/null
 
     # 首次安装默认启用；按 enabled 决定是否自启
+    # TODO 此处可能有bug，会导致app无法连接到控制器，必须手动 module\action.sh 启动模块。
     [ -f "$DATA/state/enabled" ] || echo 1 > "$DATA/state/enabled" 2>/dev/null
     [ "$(cat "$DATA/state/enabled" 2>/dev/null)" != "0" ] && \
         "$HELPER" start >> "$DATA/logs/boot.log" 2>&1
 } > /dev/null 2>&1 &
 
 # 幂等安装/更新辅助 APK（磁贴+通知快捷入口）
-# 触发条件：App 未安装，或模块更新带了新 APK（customize.sh 写入的指纹与当前不一致）；
+# 触发条件：App 未安装，或模块更新带了新 APK ；
 # 安装成功才更新指纹，失败则下次开机重试
+# TODO 如果失败或未安装，使用 module\module.prop 的 description 体现模块状态
 {
     sleep 20
     APK="$MODDIR/bin/MihomoControl.apk"

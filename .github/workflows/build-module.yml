@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # 每周一 08:00 UTC 自动重建：拉取最新 mihomo / zashboard 等依赖（自更新）
+    # TODO 控制为连续两次 自动重建 失败后不执行
     - cron: "0 8 * * 1"
 
 env:

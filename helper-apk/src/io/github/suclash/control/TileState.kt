@@ -28,6 +28,7 @@ object TileState {
         STATE_RE.find(statusOut)?.groupValues?.get(1).let(::normalize)
 
     /** root 读取状态并刷新通知（结果派发主线程）。 */
+    // TODO 用户手动启停后，有概率出现通知显示的状态与实际状态不同步的问题，待排查
     fun sync(c: Context) {
         appScope.launch(mainDispatcher) {
             val out = withContext(Dispatchers.IO) { Root.ctl("status", 20) }

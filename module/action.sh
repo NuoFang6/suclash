@@ -49,6 +49,8 @@ get_key() {
 force_stop() {
     echo ">> 强制停止模块所有进程..."
     # 先杀看门狗（防止它把核心拉回来），再杀核心；宽限 1 秒后补 SIGKILL
+    # TODO 退出核心时优先等其优雅退出，强杀非必要不执行。
+    # TODO 考虑出现极端情况如 僵尸进程、无法杀死 时的解决方案
     pkill -f "suclash_helper watchdog" 2>/dev/null
     pkill -f "suclash/runtime.yaml" 2>/dev/null
     sleep 1
